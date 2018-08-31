@@ -2,7 +2,7 @@
 bot or tool or code , named as you want . Made for analysis server and you can output all inforamtion about server , who has administrator 
 , manage server , manage role , hidden channels , top 10 roles , roles permissions ...etc **You do not need any permissions** and **You can use it as selfbot**
 
-- output as HTML file . saved in bot or code folder. And there is example for output file [3193033456276864 -Example] .
+- output as HTML file . saved in bot or code folder. And there is example for output file [3193033456276864 -Example]
 - **Recommend** : use Google Chrome to open HTML file.
 
 `self_infoserver.py` for selfbot [user account] , `infoserver.py` for bot account
