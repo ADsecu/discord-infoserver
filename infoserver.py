@@ -496,6 +496,8 @@ async def _check_roles_permissions(ctx, server):
     role_m_channels = "\n".join(['<li>' + role.name + '</li>' for role in server.role_hierarchy if role.permissions.manage_channels])
     role_m_roles = "\n".join(['<li>' + role.name + '</li>' for role in server.role_hierarchy if role.permissions.manage_roles])
     role_m_messages = "\n".join(['<li>' + role.name + '</li>' for role in server.role_hierarchy if role.permissions.manage_messages])
+    role_move_member = "\n".join(['<li>' + role.name + '</li>' for role in server.role_hierarchy if role.permissions.move_members])
+    role_mute_member = "\n".join(['<li>' + role.name + '</li>' for role in server.role_hierarchy if role.permissions.mute_members])
     role_create_invite = "\n".join(['<li>' + role.name + '</li>' for role in server.role_hierarchy if role.permissions.create_instant_invite])
 
     html.extend('<p><strong>Administrator</strong></p>\n')
@@ -544,6 +546,20 @@ async def _check_roles_permissions(ctx, server):
     if len(role_m_messages) >0:
         html.extend('<ul>\n')
         html.extend(role_m_messages)
+        html.extend('</ul>\n')
+    else:
+        html.extend('<p><span style="text-decoration: underline;">NONE</span></p>\n')
+    html.extend('<p><strong>move_members</strong></p>\n')
+    if len(role_move_member) >0:
+        html.extend('<ul>\n')
+        html.extend(role_move_member)
+        html.extend('</ul>\n')
+    else:
+        html.extend('<p><span style="text-decoration: underline;">NONE</span></p>\n')
+    html.extend('<p><strong>mute_members</strong></p>\n')
+    if len(role_mute_member) >0:
+        html.extend('<ul>\n')
+        html.extend(role_mute_member)
         html.extend('</ul>\n')
     else:
         html.extend('<p><span style="text-decoration: underline;">NONE</span></p>\n')
@@ -679,13 +695,16 @@ async def _main(ctx, server):
 
 
 
+
 @bot.command(pass_context=True)
 async def info(ctx, nu=None):
 
     if nu:
         server = discord.utils.get(bot.servers, id=nu)
         if server:
+            msg = await ctx.bot.say("**Please wait ...**")
             await _main(ctx, server)
+            await ctx.bot.delete_message(msg)
             await ctx.bot.say("**DONE\nFor Server ID:``{}``**\n**html File saved in bot folder**".format(server.id))
             html.clear()
         else:
@@ -693,7 +712,9 @@ async def info(ctx, nu=None):
 
     else:
         server = ctx.message.server
+        msg = await ctx.bot.say("**Please wait  ...**")
         await _main(ctx, server)
+        await ctx.bot.delete_message(msg)
         await ctx.bot.say("**DONE FOR SERVER**\n**html File saved in bot folder**")
         html.clear()
 
