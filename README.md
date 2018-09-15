@@ -50,7 +50,8 @@ replace perfix as you like and token by your own
 **How to :**
 ```
 !info = analysis the server where you sent the message
-Or add Server ID
+info all = analysis all servers
+   Or add Server ID
 !info 1234567890987654321
 ```
 
