@@ -733,7 +733,7 @@ async def info(ctx, nu=None):
 async def h(ctx):
     help = ('**How to**\n'
             '   ``{0}info`` = analysis this server\n'
-            '   ``{0}info all`` = analysis all servers
+            '   ``{0}info all`` = analysis all servers'
             '*or add Server ID\n'
             '   ``{0}info`` 1234567890987654321\n\n**And check bot folder :)**'.format(prefix))
     await ctx.bot.say(help)
