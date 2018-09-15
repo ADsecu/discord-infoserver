@@ -699,7 +699,17 @@ async def _main(ctx, server):
 @bot.command(pass_context=True)
 async def info(ctx, nu=None):
 
-    if nu:
+
+    if nu == 'all':
+        msg = await ctx.bot.say('**Please wait ... \nanalysis {} servers ...**'.format(len(bot.servers)))
+        for server in bot.servers:
+            server = discord.utils.get(bot.servers, id=server.id)
+            await _main(ctx, server)
+            html.clear()
+        await ctx.bot.delete_message(msg)
+        await ctx.bot.say('**Done .. {} servers**\n'.format(len(bot.servers)))
+
+    elif nu:
         server = discord.utils.get(bot.servers, id=nu)
         if server:
             msg = await ctx.bot.say("**Please wait ...**")
@@ -723,6 +733,7 @@ async def info(ctx, nu=None):
 async def h(ctx):
     help = ('**How to**\n'
             '   ``{0}info`` = analysis this server\n'
+            '   ``{0}info all`` = analysis all servers
             '*or add Server ID\n'
             '   ``{0}info`` 1234567890987654321\n\n**And check bot folder :)**'.format(prefix))
     await ctx.bot.say(help)
