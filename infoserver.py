@@ -58,6 +58,7 @@ async def on_ready():
 
 async def html_generate():
     html.append("""<HEAD>
+<meta charset="UTF-8">
 <TITLE>INFOserver</TITLE>
 </HEAD>
 <BODY BGCOLOR="ECECE9">
