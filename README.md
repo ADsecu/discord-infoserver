@@ -5,8 +5,10 @@ bot or tool or code , named as you want . Made for analysis server and you can o
 - output as HTML file . saved in bot or code folder. And there is example for output file [3193033456276864 -Example]
 - **Recommend** : use Google Chrome to open HTML file.
 
-`self_infoserver.py` for selfbot [user account] , `infoserver.py` for bot account
+`self_infoserver.py` for selfbot [user account] , `infoserver.py` for bot account.
 
+## Screenshot
+![s c](screenshot.gif "screenshot")
 
 ## Features
 - server owner [members, bots].
@@ -28,33 +30,32 @@ bot or tool or code , named as you want . Made for analysis server and you can o
 
 
 
-## Token&Prefix
+## Token
 open `infoserver.py` :
 ```
-prefix = "!"
 token = "Token Here"
 ```
-replace perfix as you like and token by your own
+replace token by your own(Line 10)
 
 
 
 ## Start the bot
+**Note** : `infoserver.py`for bot token and `self_infoserver.py` for self account token.
  - **Linux and macOS :** `python3 infoserver.py` 
  - **Windows :** `py infoserver.py` or just double click [if support]
  
  
- 
-### Commands 
-> help command : !h
 
 **How to :**
 ```
-!info = analysis the server where you sent the message
-!info all = analysis all servers
-Or add Server ID
-!info 1234567890987654321
+ Choose :
+  [1]  Analysis All servers You have.
+  [2]  Analysis server by ID.
+  [3]  List all server You have
+  [0]  Exit
+  [00] Clear screen ;)
 ```
-
+just type number on terminal !
 
 
  ## Who am i ?
