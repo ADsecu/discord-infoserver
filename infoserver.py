@@ -5,34 +5,36 @@ import logging
 import asyncio
 import time
 import datetime
-from discord.ext import commands
 
 
-
-
-prefix = "!"
 token = "Token Here"
 
 
-
-bot = commands.Bot(command_prefix=prefix)
+bot =  discord.Client()
 are_you_windows = os.name == "nt"
 file = "{} - {}.html"
 html = []
-
 
 help_note = """
  ___ _   _ _____ ___
 |_ _| \ | |  ___/ _ \ ___  ___ _ ____   _____ _ __
  | ||  \| | |_ | | | / __|/ _ \ '__\ \ / / _ \ '__|
  | || |\  |  _|| |_| \__ \  __/ |   \ V /  __/ |
-|___|_| \_|_|   \___/|___/\___|_|    \_/ \___|_| v0.0.1
+|___|_| \_|_|   \___/|___/\___|_|    \_/ \___|_| v0.0.2
 #=====================================================#
 #                  Twitter: @ADsecu                   #
 #=====================================================#
 
 """
 
+help_note2 = """
+ Choose :
+  [1]  Analysis All servers You have.
+  [2]  Analysis server by ID.
+  [3]  List all server You have
+  [0]  Exit
+  [00] Clear screen ;)
+"""
 
 def clear_screen():
     if are_you_windows:
@@ -50,13 +52,58 @@ async def on_ready():
     print('---------------------')
     print('I  AM  ONLINE')
     print("MY  NAME  IS:   @" + bot.user.name + "#" + bot.user.discriminator)
-    print("MY  PREFIX  IS: "+ prefix)
     print("MY  ID  IS: "+ bot.user.id)
     print('---------------------\n')
 
+    print(help_note2)
+    while 1+1 != 3:
+        inp = input('INFOserver~$ ')
+        if inp == '1':
+            print('WORKING ... ')
+            for server in bot.servers:
+                server = discord.utils.get(bot.servers, id=server.id)
+                _main(server)
+                print('\33[32m[+]Success: {} \33[0m'.format(server.id))
+                html.clear()
+            print('{} servers / All Data saved as HTML file in folder'.format(len(bot.servers)))
+
+        elif inp == '2':
+            serverid = input('Type or Paste server ID $~ ')
+            server = discord.utils.get(bot.servers, id=serverid)
+            if server:
+                _main(server)
+                print('\33[32m[+]Success: {}\33[0m'.format(server.id))
+                html.clear()
+                print('Data saved as HTML file in folder')
+            else:
+                print('\033[91mInvalid Server ID\033[0m')
+
+        elif inp == '3':
+            count = 1
+            for server in bot.servers:
+                print('{} - Server ID :{} | OWNER : ({})'.format(count, server.id, server.owner))
+                count = count + 1
+        elif inp == '0':
+            print('Force Close Connection .. Thanks ')
+            sys.exit()
+        elif inp == '00':
+                clear_screen()
+                print(help_note)
+                print('\n')
+                print('---------------------')
+                print('I  AM  ONLINE')
+                print("MY  NAME  IS:   @" + bot.user.name + "#" + bot.user.discriminator)
+                print("MY  ID  IS: "+ bot.user.id)
+                print('---------------------\n')
+                print(help_note2)
+        else:
+            print('\033[91mERORR\033[0m\n[0] to Exit\n[00] For Clear screen & Home ')
 
 
-async def html_generate():
+
+
+
+def html_generate():
     html.append("""<HEAD>
 <meta charset="UTF-8">
 <TITLE>INFOserver</TITLE>
@@ -124,7 +171,7 @@ async def html_generate():
 <p>&nbsp;</p>
     """)
 
-async def _info(ctx, server):
+def _info(server):
     html.extend("""<h1 id='info'>== General info == </h1>
     """)
     members = len([member for member in server.members if not member.bot])
@@ -165,11 +212,11 @@ async def _info(ctx, server):
                     '<p>&nbsp;</p>\n'.format(server.icon_url, server.owner, server.id, server.name, members, bots))
 
     html.extend(server_ginfo)
-    await member_has_muted_role(ctx, server)
-    await my_permissions(ctx, server)
+    member_has_muted_role(server)
+    my_permissions(server)
 
 
-async def my_permissions(ctx, server):
+def my_permissions(server):
     inv = []
     move = []
     manage = []
@@ -273,7 +320,7 @@ async def my_permissions(ctx, server):
     else:
         html.extend('<p><strong>Roles : </strong>None</p>\n')
 
-async def _administrator(ctx, server):
+def _administrator(server):
     html.extend("""<h2 id='administrator'><span style="background-color: #ff0000;">Administrator = True</span></h2>
     """)
     members_admins  = "\n".join(['<li>@' +member.name + '#' + member.discriminator + '</li>\n' for member in server.members if member.server_permissions.administrator
@@ -301,7 +348,7 @@ async def _administrator(ctx, server):
 
 
 
-async def _ban(ctx, server):
+def _ban(server):
     html.extend("""<h2 id = 'Ban_members'><span style="background-color: #ff6600;">Ban_members = True</span></h2>
     """)
     members_ban  = "\n".join(['<li>@' +member.name + '#' + member.discriminator + '</li>' for member in server.members
@@ -327,7 +374,7 @@ async def _ban(ctx, server):
         html.extend('<p><span style="text-decoration: underline;">NONE</span></p>\n')
 
 
-async def _kick(ctx, server):
+def _kick(server):
     html.extend("""<h2 id ='kick_members'><span style="background-color: #ff9900;">kick_members = True</span></h2>
     """)
     members_kick  = "\n".join(['<li>@' + member.name + '#' + member.discriminator + '</li>' for member in server.members
@@ -352,7 +399,7 @@ async def _kick(ctx, server):
         html.extend('<p><span style="text-decoration: underline;">NONE</span></p>\n')
 
 
-async def _manage_server(ctx, server):
+def _manage_server(server):
     html.extend("""<h2 id='manage_server'><span style="background-color: #ffcc00;">manage_server = True</span></h2>
     """)
     members_m_server = "\n".join(['<li>@' + member.name + '#' + member.discriminator + '</li>' for member in server.members
@@ -376,7 +423,7 @@ async def _manage_server(ctx, server):
     else:
         html.extend('<p><span style="text-decoration: underline;">NONE</span></p>\n')
 
-async def _manage_roles(ctx, server):
+def _manage_roles(server):
     html.extend("""<h2 id="manage_roles"><span style="background-color: #ffcc99;">manage_roles = True</span></h2>
     """)
     members_roles = '\n'.join(['<li>@' + member.name + '#' + member.discriminator + '</li>' for member in server.members
@@ -402,7 +449,7 @@ async def _manage_roles(ctx, server):
 
 
 
-async def _manage_channels(ctx, server):
+def _manage_channels(server):
     html.extend("""<h2 id = "manage_channels"><span style="background-color: #ffff99;">manage_channels = True</span></h2>
     """)
 
@@ -427,7 +474,7 @@ async def _manage_channels(ctx, server):
     else:
         html.extend('<p><span style="text-decoration: underline;">NONE</span></p>\n')
 
-async def _manage_messages(ctx, server):
+def _manage_messages(server):
     html.extend("""<h2 id="manage_messages"><span style="background-color: #339966;">manage_messages = True</span></h2>
     """)
 
@@ -453,7 +500,7 @@ async def _manage_messages(ctx, server):
         html.extend('<p><span style="text-decoration: underline;">NONE</span></p>\n')
 
 
-async def _check_roles_members(ctx, server):
+def _check_roles_members(server):
     html.extend("""<h2 id='top10'>Top <span style="text-decoration: underline;">10</span> roles with members</h2>
     """)
     count = 0
@@ -485,7 +532,7 @@ async def _check_roles_members(ctx, server):
 
 
 
-async def _check_roles_permissions(ctx, server):
+def _check_roles_permissions(server):
     html.extend("""<h2 id='rolespermissions'>Roles permissions</h2>
     """)
 
@@ -579,7 +626,7 @@ async def _check_roles_permissions(ctx, server):
 
 
 
-async def _tc(ctx, server):
+def _tc(server):
     html.extend("""<h2 id='hidden_text_channels'>Hidden channels</h2>
     """)
     hidden_text_channels = "\n".join(['<li>#' + channel.name + ' &nbsp;| &nbsp;' + channel.id + '</li>' for channel in server.channels if channel.type == discord.ChannelType.text
@@ -595,7 +642,7 @@ async def _tc(ctx, server):
 
 
 
-async def _vm(ctx, server):
+def _vm(server):
     html.extend("""<h2 id='hidden_voice_channels'>Hidden voice channels with members</h2>
     """)
     log_for_html = []
@@ -614,8 +661,7 @@ async def _vm(ctx, server):
         html.extend('<p><span style="text-decoration: underline;">NONE</span></p>\n')
 
 
-
-async def role_check_channels_permissionsFalse(ctx, server):
+def role_check_channels_permissionsFalse(server):
     html.extend("""<h2 id='Muted_roles'>Muted roles in channels</h2>
     """)
     for channel in server.channels:
@@ -627,7 +673,7 @@ async def role_check_channels_permissionsFalse(ctx, server):
             else:
                 html.extend('<p><strong>#{}</strong> | NONE</p>\n'.format(channel.name))
 
-async def member_check_channels_permissionsFalse(ctx, server):
+def member_check_channels_permissionsFalse(server):
     html.extend("""<h2 id="Muted_members">Muted members in channels</h2>
     """)
     for channel in server.channels:
@@ -641,7 +687,7 @@ async def member_check_channels_permissionsFalse(ctx, server):
 
 
 
-async def member_has_muted_role(ctx, server):
+def member_has_muted_role(server):
     roles = ('Muted', 'Mute', 'muted', 'mute')
     for role in server.roles:
         if role.name in roles:
@@ -652,91 +698,49 @@ async def member_has_muted_role(ctx, server):
                 html.extend('<p><strong>Muted members in server:</strong> [{}]</p>\n<blockquote>\n<p>NONE</p>\n</blockquote>'.format(role.name))
 
 
-async def _main(ctx, server):
+def _main(server):
     try:
-        await  html_generate()
-        await _info(ctx, server)
+        html_generate()
+        _info(server)
         html.extend("<HR>\n")
         html.extend("""<h1 id='members'>== Members&nbsp;==</h1>
         """)
-        await _administrator(ctx, server)
-        await _ban(ctx, server)
-        await _kick(ctx, server)
-        await _manage_server(ctx, server)
-        await _manage_roles(ctx, server)
-        await _manage_channels(ctx, server)
-        await _manage_messages(ctx, server)
+        _administrator(server)
+        _ban(server)
+        _kick(server)
+        _manage_server(server)
+        _manage_roles(server)
+        _manage_channels(server)
+        _manage_messages(server)
         html.extend("<HR/>\n")
         html.extend('<HR>\n')
         html.extend("""<h1 id= 'roles'>== Roles ==</h1>
         """)
-        await _check_roles_members(ctx, server)
-        await _check_roles_permissions(ctx, server)
+        _check_roles_members(server)
+        _check_roles_permissions(server)
         html.extend('<HR/>\n')
         html.extend('<HR>\n')
         html.extend("""<h1 id = 'channels'>== Channels ==</h1>
         """)
-        await _tc(ctx, server)
-        await role_check_channels_permissionsFalse(ctx, server)
-        await member_check_channels_permissionsFalse(ctx, server)
-        await _vm(ctx,server)
+        _tc(server)
+        role_check_channels_permissionsFalse(server)
+        member_check_channels_permissionsFalse(server)
+        _vm(server)
         html.extend('<HR/>\n')
         html.extend("""<p>&nbsp;</p>
 <h3 style="text-align: center;"><a href="#top">Top</a></h3>
 </BODY>
 </HTML>""")
 
-    except: pass
+    except:
+        print('\033[91m[-]Failed {}\033[0m'.format(server.id))
+        pass
 
     s = file.format(server.id, datetime.datetime.now().strftime("%I.%M%p"))
     with open(s, "w", encoding='utf-8') as f: #ا
         for text in html:
             f.write(text)
     f.close()
-
-
-
-
-@bot.command(pass_context=True)
-async def info(ctx, nu=None):
-
-    if nu == 'all':
-        msg = await ctx.bot.say('**Please wait ... \nanalysis {} servers ...**'.format(len(bot.servers)))
-        for server in bot.servers:
-            server = discord.utils.get(bot.servers, id=server.id)
-            await _main(ctx, server)
-            html.clear()
-        await ctx.bot.delete_message(msg)
-        await ctx.bot.say('**Done .. {} servers**\n'.format(len(bot.servers)))
-
-    elif nu:
-        server = discord.utils.get(bot.servers, id=nu)
-        if server:
-            msg = await ctx.bot.say("**Please wait ...**")
-            await _main(ctx, server)
-            await ctx.bot.delete_message(msg)
-            await ctx.bot.say("**DONE\nFor Server ID:``{}``**\n**html File saved in bot folder**".format(server.id))
-            html.clear()
-        else:
-            await ctx.bot.say("**Invalid ID**")
-
-    else:
-        server = ctx.message.server
-        msg = await ctx.bot.say("**Please wait  ...**")
-        await _main(ctx, server)
-        await ctx.bot.delete_message(msg)
-        await ctx.bot.say("**DONE FOR SERVER**\n**html File saved in bot folder**")
-        html.clear()
-
-
-@bot.command(pass_context=True)
-async def h(ctx):
-    help = ('**How to**\n'
-            '   ``{0}info`` = analysis this server\n'
-            '   ``{0}info all`` = analysis all servers'
-            '*or add Server ID\n'
-            '   ``{0}info`` 1234567890987654321\n\n**And check bot folder :)**'.format(prefix))
-    await ctx.bot.say(help)
 
 
 
