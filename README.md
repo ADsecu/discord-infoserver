@@ -24,8 +24,10 @@ bot or tool or code , named as you want . Made for analysis server and you can o
 - pip
 
 **modules :**
-- discord.py 
-`pip3 install discord.py` or for windows `py -m pip install -U discord.py`
+- discord.py - make sure to install **development version** with this command:
+```
+python3 -m pip install -U https://github.com/Rapptz/discord.py/archive/master.zip#egg=discord.py[voice]
+```
 
 
 
